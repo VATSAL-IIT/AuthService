@@ -1,8 +1,10 @@
 const UserService=require('../services/user-service');
 
+const userService=new UserService();
+
 const create=async(req,res)=>{
     try{
-        const user=await UserService.create({
+        const user=await userService.create({
             email:req.body.email,
             password:req.body.password
         })
@@ -22,3 +24,5 @@ const create=async(req,res)=>{
         })
     }
 }
+
+ module.exports={create}
