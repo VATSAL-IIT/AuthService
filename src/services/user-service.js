@@ -58,17 +58,34 @@ class UserService{
         }
     }
     
+
+    async isAuthenticated(token){
+        try{
+            const response=this.verifyToken(token);
+            console.log(response)
+            if(!response){
+                throw {error:"Token not valid"};
+            }
+            const user=this.userRepo.getById(response.id);
+            if(!user){
+                throw {error:"No user with the token exists."}
+            }
+            return user.id;
+        }
+        catch(error){
+            console.log(error);
+        }
+    }
+
     verifyPassword(userInputPassword,encryptedPassword){
         try{
-            const response=  bcrypt.compareSync(userInputPassword,encryptedPassword);
+            const response=bcrypt.compareSync(userInputPassword,encryptedPassword);
             return response; 
         }
         catch(error){
             console.log("Error in password validation "+ error);
         }
     }
-
-    
 
     async signIn(email,plainPassword){
         try{
@@ -87,8 +104,5 @@ class UserService{
         }
     }
 }
-
-
-
 
 module.exports=UserService;
