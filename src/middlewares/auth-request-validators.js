@@ -11,7 +11,17 @@ const validateUserAuth=(req,res,next)=>{
     next();
 }
 
+const validateIsAdminRequest=(req,res,next)=>{
+    if(!req.params.id)
+    {
+        return res.status(500).json({
+            success:false,
+            data:{},
+            message:'Id missing.'
+        })
+    }
+    next();
+}
 
-
-module.exports=validateUserAuth;
+module.exports={validateUserAuth,validateIsAdminRequest};
 

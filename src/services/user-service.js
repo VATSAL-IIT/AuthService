@@ -2,6 +2,9 @@ const UserRepo = require('../repository/user-repo');
 const bcrypt=require('bcrypt');
 const jwt=require('jsonwebtoken');
 const JWT_KEY="authKey";
+const {Role} = require('../models/index');
+const { StatusCodes } = require('http-status-codes');
+const AppErrors = require('../utils/error-handler');
 
 class UserService{
     constructor(){
@@ -14,7 +17,16 @@ class UserService{
             return user;
         }
         catch(error){
+            if(error.name=='ValidationError'){
+                throw error;
+            }
             console.log("Something went wrong in the service layer " + error);
+            throw new AppErrors(
+                'ServerError',
+                'Something went wrong in service',
+                'Logical Issue Found',
+                StatusCodes.INTERNAL_SERVER_ERROR
+            )
         }
     }
 
@@ -90,7 +102,6 @@ class UserService{
     async signIn(email,plainPassword){
         try{
             const user= await this.userRepo.getByEmail(email);
-           
             if(this.verifyPassword(plainPassword,user.password))
             {
                 const newJWT = this.createToken({email:user.email,id:user.id});
@@ -101,6 +112,22 @@ class UserService{
         }
         catch(error){
             console.log("Something went wrong in signin process "+ error);
+        }
+    }
+
+    async isAdmin(userId){
+        try{
+            const user= await this.userRepo.getById(userId);
+            const role= await Role.findOne({
+                where:{
+                    name:'ADMIN'
+                }
+            })
+            if(user.hasRole(role))
+            return "User has admin priviledge.";
+            return "Not an admin user."
+        }catch(error){
+            console.log("Something went wrong in the services layer.")
         }
     }
 }

@@ -1,5 +1,6 @@
-const {User}= require('../models/index');
-const jwt=require('jsonwebtoken');
+const ValidationError = require('../utils/validation-error');
+const { User }= require('../models/index');
+
 
 
 class UserRepo{
@@ -10,7 +11,11 @@ class UserRepo{
             return user;
         }
         catch(error){
-            console.log("Something went wrong in the repo layer " + error);
+            if(error.name=='SequelizeValidationError'){
+                console.log('Creating new validation error.')
+                throw(new ValidationError(error));
+            }
+            throw(error);
         }
     }
 

@@ -16,12 +16,7 @@ const create=async(req,res)=>{
         });
     }
     catch(error){
-        return res.status(500).json({
-            data:{},
-            success:false,
-            message:"Something went wrong.",
-            error:error
-        })
+        return res.status(error.statusCode).json(error);
     }
 }
 
@@ -32,6 +27,26 @@ const get=async (req,res)=>{
             data:user,
             success:true,
             message:"Successfully retreived the user.",
+            error:{}
+        });
+    }
+    catch(error){
+        return res.status(500).json({
+            data:{},
+            success:false,
+            message:"Something went wrong.",
+            error:error
+        })
+    }
+}
+
+const isAdmin=async (req,res)=>{
+    try{
+        const response=await userService.isAdmin(req.params.id);
+        return res.status(200).json({
+            data:response,
+            success:true,
+            message:"Successfully fetched whether user is admin or not.",
             error:{}
         });
     }
@@ -104,4 +119,4 @@ const isAuthenticated= async (req,res)=>{
     }
 }
 
-module.exports={create,get,destroy,signIn,isAuthenticated};
+module.exports={create,get,destroy,signIn,isAdmin,isAuthenticated};
