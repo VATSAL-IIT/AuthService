@@ -8,7 +8,7 @@ const db=require('./models/index')
 const setupAndStartServer=()=>{
     app.use(bodyParser.json());
     app.use(bodyParser.urlencoded({extended:true}));
-    app.use('/api',apiRoutes);
+    app.use('/authservice/api',apiRoutes);
     app.listen(3001,async ()=>{
         console.log("Server started at 3001");
         // await db.sequelize.sync({alter:true})               // for syncing the db after changes.
